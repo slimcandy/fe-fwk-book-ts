@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES2025",
+    "lib": ["ES2025", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": false,
+    "rootDir": "src",
+    "outDir": "dist-ts",
+    "noEmitOnError": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*.ts"]
+}

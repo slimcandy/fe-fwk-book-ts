@@ -2,7 +2,7 @@ import cleanup from 'rollup-plugin-cleanup'
 import filesize from 'rollup-plugin-filesize'
 
 export default {
-  input: 'src/index.js',
+  input: 'dist-ts/index.js',
   plugins: [cleanup()],
   output: [
     {

@@ -2,9 +2,20 @@
 const todos = ['Walk the dog', 'Water the plants', 'Sand the chairs']
 
 // HTML element references
-const addTodoInput = document.getElementById('todo-input')
-const addTodoButton = document.getElementById('add-todo-btn')
-const todosList = document.getElementById('todos-list')
+const addTodoInput = document.getElementById('todo-input') as HTMLInputElement
+if (!(addTodoInput instanceof HTMLInputElement)) {
+  throw new Error('#todo-input not found')
+}
+
+const addTodoButton = document.getElementById('add-todo-btn') as HTMLButtonElement
+if (!(addTodoButton instanceof HTMLButtonElement)) {
+  throw new Error('#add-todo-btn not found')
+}
+
+const todosList = document.getElementById('todos-list') as HTMLUListElement
+if (!(todosList instanceof HTMLUListElement)) {
+  throw new Error('#todos-list not found')
+}
 
 // Initialize the view
 for (const todo of todos) {
@@ -26,7 +37,7 @@ addTodoButton.addEventListener('click', () => {
 })
 
 // Functions
-function renderTodoInReadMode(todo) {
+function renderTodoInReadMode(todo: string) {
   const li = document.createElement('li')
 
   const span = document.createElement('span')
@@ -52,7 +63,7 @@ function renderTodoInReadMode(todo) {
   return li
 }
 
-function renderTodoInEditMode(todo) {
+function renderTodoInEditMode(todo: string) {
   const li = document.createElement('li')
 
   const input = document.createElement('input')
@@ -93,12 +104,12 @@ function addTodo() {
   addTodoButton.disabled = true
 }
 
-function removeTodo(index) {
+function removeTodo(index: number) {
   todos.splice(index, 1)
   todosList.childNodes[index].remove()
 }
 
-function updateTodo(index, description) {
+function updateTodo(index: number, description: string) {
   todos[index] = description
   const todo = renderTodoInReadMode(description)
   todosList.replaceChild(todo, todosList.childNodes[index])

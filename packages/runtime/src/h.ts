@@ -5,7 +5,35 @@ export const DOM_TYPES = {
   TEXT: 'text',
   ELEMENT: 'element',
   FRAGMENT: 'fragment',
+} as const
+
+export interface ElementVNodeProps {
+  on?: Record<string, EventListener>
+  class?: Element['className'] | Element['className'][]
+  style?: Record<string, string>
+  [attr: string]: unknown
 }
+
+export interface ElementVNode {
+  type: typeof DOM_TYPES.ELEMENT
+  tag: string
+  props: ElementVNodeProps
+  children: VNode[]
+}
+
+export interface TextVNode {
+  type: typeof DOM_TYPES.TEXT
+  value: string
+}
+
+export interface FragmentVNode {
+  type: typeof DOM_TYPES.FRAGMENT
+  children: VNode[]
+}
+
+export type VNode = TextVNode | ElementVNode | FragmentVNode
+
+type VNodeChild = VNode | string | null
 
 /**
  * Hypertext function: creates a virtual node representing an element with
@@ -19,13 +47,12 @@ export const DOM_TYPES = {
  *
  * The children are added to the element as child nodes.
  * If a child is a string, it is converted to a text node using `hString()`.
- *
- * @param {string} tag the tag name of the element
- * @param {object} props the props to add to the element
- * @param {array} children the children to add to the element
- * @returns {object} the virtual node
  */
-export function h(tag, props = {}, children = []) {
+export function h(
+  tag: string,
+  props: ElementVNodeProps = {},
+  children: VNodeChild[] = []
+): ElementVNode {
   return {
     tag,
     props,
@@ -38,23 +65,17 @@ export function h(tag, props = {}, children = []) {
  * Creates a text virtual node.
  *
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Text}
- *
- * @param {string} str the text to add to the text node
- * @returns {object} the virtual node
  */
-export function hString(str) {
+export function hString(str: string): TextVNode {
   return { type: DOM_TYPES.TEXT, value: str }
 }
 
 /**
  * Wraps the virtual nodes in a fragment.
-
- * If a child is a string, it is converted to a text node using `hString()`.
  *
- * @param {array} vNodes the virtual nodes to wrap in a fragment
- * @returns {object} the virtual node
+ * If a child is a string, it is converted to a text node using `hString()`.
  */
-export function hFragment(vNodes) {
+export function hFragment(vNodes: VNodeChild[]): FragmentVNode {
   assert(Array.isArray(vNodes), 'hFragment expects an array of vNodes')
 
   return {
@@ -63,7 +84,7 @@ export function hFragment(vNodes) {
   }
 }
 
-function mapTextNodes(children) {
+function mapTextNodes(children: (VNode | string)[]): VNode[] {
   return children.map((child) =>
     typeof child === 'string' ? hString(child) : child
   )

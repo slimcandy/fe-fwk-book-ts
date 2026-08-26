@@ -4,7 +4,15 @@ module.exports = {
     es2021: true,
   },
   extends: 'eslint:recommended',
-  overrides: [],
+  overrides: [
+    {
+      files: ['*.ts'],
+      rules: {
+        'no-undef': 'off',
+        'no-unused-vars': 'off',
+      },
+    },
+  ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 'latest',

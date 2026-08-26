@@ -8,6 +8,7 @@ afterEach(() => {
 
 test("can't mount an element without a host element", () => {
   const vdom = h('div', {}, [hString('hello')])
+  // @ts-expect-error
   expect(() => mountDOM(vdom)).toThrow()
 })
 
@@ -44,6 +45,7 @@ test('save the created element in the vdom', () => {
 
 test("can't mount a fragment without a parent element", () => {
   const vdom = hFragment([hString('hello')])
+  // @ts-expect-error
   expect(() => mountDOM(vdom)).toThrow()
 })
 

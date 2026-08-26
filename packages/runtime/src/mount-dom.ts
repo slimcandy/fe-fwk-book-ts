@@ -1,16 +1,22 @@
 import { setAttributes } from './attributes'
 import { addEventListeners } from './events'
-import { DOM_TYPES } from './h'
+import {
+  DOM_TYPES,
+  type ElementVNode,
+  type ElementVNodeProps,
+  type FragmentVNode,
+  type TextVNode,
+  type VNode,
+} from './h'
 
 /**
  * Creates the DOM nodes for a virtual DOM tree, mounts them in the DOM, and
  * modifies the vdom tree to include the corresponding DOM nodes and event listeners.
- *
- * @param {object} oldVDom the virtual DOM node to mount
- * @param {HTMLElement} parentEl the host element to mount the virtual DOM node to
  */
-export function mountDOM(vdom, parentEl) {
-  switch (vdom.type) {
+export function mountDOM(vdom: VNode, parentEl: HTMLElement) {
+  const { type } = vdom
+
+  switch (type) {
     case DOM_TYPES.TEXT: {
       createTextNode(vdom, parentEl)
       break
@@ -27,7 +33,7 @@ export function mountDOM(vdom, parentEl) {
     }
 
     default: {
-      throw new Error(`Can't mount DOM of type: ${vdom.type}`)
+      throw new Error(`Can't mount DOM of type: ${type}`)
     }
   }
 }
@@ -41,11 +47,8 @@ export function mountDOM(vdom, parentEl) {
  * or `remove()` are not available on `Text` nodes.
  *
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Text}
- *
- * @param {object} vdom the virtual DOM node of type "text"
- * @param {Element} parentEl the host element to mount the virtual DOM node to
  */
-function createTextNode(vdom, parentEl) {
+function createTextNode(vdom: TextVNode, parentEl: HTMLElement) {
   const { value } = vdom
 
   const textNode = document.createTextNode(value)
@@ -60,11 +63,8 @@ function createTextNode(vdom, parentEl) {
  *
  * If the vdom includes event listeners, these are added to the vdom object, under the
  * `listeners` property.
- *
- * @param {object} vdom the virtual DOM node of type "element"
- * @param {Element} parentEl the host element to mount the virtual DOM node to
  */
-function createElementNode(vdom, parentEl) {
+function createElementNode(vdom: ElementVNode, parentEl: HTMLElement) {
   const { tag, props, children } = vdom
 
   const element = document.createElement(tag)
@@ -75,7 +75,11 @@ function createElementNode(vdom, parentEl) {
   parentEl.append(element)
 }
 
-function addProps(el, props, vdom) {
+function addProps(
+  el: HTMLElement,
+  props: ElementVNodeProps,
+  vdom: ElementVNode
+) {
   const { on: events, ...attrs } = props
 
   vdom.listeners = addEventListeners(events, el)
@@ -91,11 +95,8 @@ function addProps(el, props, vdom) {
  * Note that `DocumentFragment` is a subclass of `Node`, but not of `Element`.
  *
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment}
- *
- * @param {object} vdom the virtual DOM node of type "fragment"
- * @param {Element} parentEl the host element to mount the virtual DOM node to
  */
-function createFragmentNodes(vdom, parentEl) {
+function createFragmentNodes(vdom: FragmentVNode, parentEl: HTMLElement) {
   const { children } = vdom
   vdom.el = parentEl
 

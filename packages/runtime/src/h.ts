@@ -1,3 +1,5 @@
+import type { Attributes } from './attributes'
+import type { EventHandlers } from './events'
 import { withoutNulls } from './utils/arrays'
 import { assert } from './utils/assert'
 
@@ -7,28 +9,31 @@ export const DOM_TYPES = {
   FRAGMENT: 'fragment',
 } as const
 
-export interface ElementVNodeProps {
-  on?: Record<string, EventListener>
-  class?: Element['className'] | Element['className'][]
-  style?: Record<string, string>
-  [attr: string]: unknown
+export type ElementVNodeProps = Attributes & {
+  on?: EventHandlers
 }
 
-export interface ElementVNode {
+export interface ElementVNode<
+  K extends keyof HTMLElementTagNameMap = keyof HTMLElementTagNameMap
+> {
   type: typeof DOM_TYPES.ELEMENT
-  tag: string
+  tag: K
   props: ElementVNodeProps
   children: VNode[]
+  el?: HTMLElementTagNameMap[K]
+  listeners?: EventHandlers
 }
 
 export interface TextVNode {
   type: typeof DOM_TYPES.TEXT
   value: string
+  el?: Text
 }
 
 export interface FragmentVNode {
   type: typeof DOM_TYPES.FRAGMENT
   children: VNode[]
+  el?: HTMLElement
 }
 
 export type VNode = TextVNode | ElementVNode | FragmentVNode
@@ -48,11 +53,11 @@ type VNodeChild = VNode | string | null
  * The children are added to the element as child nodes.
  * If a child is a string, it is converted to a text node using `hString()`.
  */
-export function h(
-  tag: string,
+export function h<K extends keyof HTMLElementTagNameMap>(
+  tag: K,
   props: ElementVNodeProps = {},
   children: VNodeChild[] = []
-): ElementVNode {
+): ElementVNode<K> {
   return {
     tag,
     props,
